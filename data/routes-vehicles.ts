@@ -43,7 +43,7 @@ export type Vehicle = {
   name: string;
   category: string;
   seating: string;
-  ac: "AC" | "Non-AC";
+  ac: string;
   features: string[];
   image: string;
 };
