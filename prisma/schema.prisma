@@ -1,0 +1,211 @@
+// Prisma schema for Arushi Travels
+// Database: mongodb
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  EDITOR
+}
+
+enum BookingStatus {
+  NEW
+  CONTACTED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+model AdminUser {
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  email          String     @unique
+  name           String
+  role           AdminRole  @default(EDITOR)
+  supabaseUserId String     @unique
+  createdAt      DateTime   @default(now())
+  auditLogs      AuditLog[]
+}
+
+model AuditLog {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  action    String
+  entity    String
+  entityId  String?
+  metadata  Json?
+  createdAt DateTime  @default(now())
+  admin     AdminUser @relation(fields: [adminId], references: [id])
+  adminId   String    @db.ObjectId
+}
+
+model Vehicle {
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  slug            String         @unique
+  name            String
+  category        String
+  seatingCapacity String
+  acType          String
+  features        String[]
+  driverIncluded  Boolean        @default(true)
+  luggageCapacity String?
+  images          VehicleImage[]
+  bookings        Booking[]
+  isPublished     Boolean        @default(true)
+  seo             SeoMeta?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model VehicleImage {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  url       String
+  altText   String
+  order     Int     @default(0)
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  vehicleId String  @db.ObjectId
+}
+
+model Destination {
+  id                String             @id @default(auto()) @map("_id") @db.ObjectId
+  slug              String             @unique
+  name              String
+  state             String
+  region            String?
+  tagline           String?
+  about             String
+  bestTimeToVisit   String?
+  nearbyAttractions String[]
+  travelTips        String[]
+  routeInformation  String?
+  images            DestinationImage[]
+  isPublished       Boolean            @default(true)
+  seo               SeoMeta?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model DestinationImage {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  url           String
+  altText       String
+  order         Int         @default(0)
+  destination   Destination @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  destinationId String      @db.ObjectId
+}
+
+model Route {
+  id               String     @id @default(auto()) @map("_id") @db.ObjectId
+  slug             String     @unique
+  fromCity         String
+  toCity           String
+  distanceKm       Int
+  travelTime       String
+  suggestedVehicle String
+  placesToVisit    String[]
+  travelGuide      String?
+  faqs             RouteFaq[]
+  isPublished      Boolean    @default(true)
+  seo              SeoMeta?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+}
+
+model RouteFaq {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  question String
+  answer   String
+  order    Int    @default(0)
+  route    Route  @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  routeId  String @db.ObjectId
+}
+
+model GalleryImage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  url       String
+  altText   String
+  category  String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Blog {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  slug          String    @unique
+  title         String
+  excerpt       String?
+  content       String
+  coverImageUrl String?
+  isPublished   Boolean   @default(false)
+  seo           SeoMeta?
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Review {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  customerName String
+  tripSummary  String?
+  rating       Int      @default(5)
+  reviewText   String
+  isPublished  Boolean  @default(true)
+  source       String?
+  createdAt    DateTime @default(now())
+}
+
+model Faq {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  question String
+  answer   String
+  category String?
+  order    Int     @default(0)
+}
+
+model Booking {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  mobile       String
+  email        String?
+  pickup       String
+  destination  String
+  travelDate   DateTime
+  vehicle      String
+  vehicleRef   Vehicle?      @relation(fields: [vehicleRefId], references: [id])
+  vehicleRefId String?       @db.ObjectId
+  passengers   Int           @default(1)
+  message      String?
+  status       BookingStatus @default(NEW)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model SeoMeta {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  seoTitle        String?
+  metaDescription String?
+  keywords        String[]
+  canonicalUrl    String?
+  ogImageUrl      String?
+
+  vehicle       Vehicle?     @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  vehicleId     String?      @unique @db.ObjectId
+  destination   Destination? @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  destinationId String?      @unique @db.ObjectId
+  route         Route?       @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  routeId       String?      @unique @db.ObjectId
+  blog          Blog?        @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  blogId        String?      @unique @db.ObjectId
+}
+
+model SiteSetting {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ribbon-dot: #C9962F;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-parchment-50 text-basalt-900 font-body antialiased;
+}
+
+::selection {
+  @apply bg-brass-500 text-basalt-950;
+}
+
+/* Visible keyboard focus everywhere */
+:focus-visible {
+  outline: 2px solid theme("colors.brass.500");
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Signature element: the "route ribbon" — a dashed waypoint path used as a
+   section divider and inside route pages. Echoes the literal product
+   (road trips between waypoints) instead of a decorative default. */
+.route-ribbon {
+  position: relative;
+  height: 2px;
+  background-image: linear-gradient(
+    to right,
+    var(--ribbon-dot) 0,
+    var(--ribbon-dot) 6px,
+    transparent 6px,
+    transparent 16px
+  );
+  background-size: 16px 2px;
+  background-repeat: repeat-x;
+}
+
+.route-ribbon::before,
+.route-ribbon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 9px;
+  height: 9px;
+  border-radius: 9999px;
+  background: var(--ribbon-dot);
+  transform: translateY(-50%);
+}
+
+.route-ribbon::before { left: -2px; }
+.route-ribbon::after { right: -2px; }
+
+.carved-card {
+  @apply bg-basalt-800/95 border border-basalt-600/60 rounded-card shadow-[0_1px_0_0_rgba(221,179,94,0.15)_inset,0_10px_30px_-15px_rgba(0,0,0,0.6)];
+}
