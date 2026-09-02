@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { destinations } from "@/data/destinations";
 import { routes } from "@/data/routes-vehicles";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.aarushitravels.in";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.aarushitravel.in";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages = ["", "/about", "/faq", "/contact"].map((p) => ({
