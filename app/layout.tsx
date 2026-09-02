@@ -24,7 +24,7 @@ const plexMono = IBM_Plex_Mono({
   weight: ["400", "500"],
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.aarushitravels.in";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.aarushitravel.in";
 const COMPANY_NAME = process.env.NEXT_PUBLIC_COMPANY_NAME || "AArushi Travels";
 
 export const metadata: Metadata = {
