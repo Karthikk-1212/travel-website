@@ -4,9 +4,9 @@ import { notFound } from "next/navigation";
 import { destinations } from "@/data/destinations";
 
 type Props = {
-  params: Promise{ 
+  params: Promise<{
     slug: string;
-};
+  }>;
 };
 
 export function generateStaticParams() {
