@@ -16,7 +16,6 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const dest = destinations.find((d) => d.slug === slug);
-
   if (!dest) return {};
 
   return {
